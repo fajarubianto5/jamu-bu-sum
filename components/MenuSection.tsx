@@ -1,20 +1,30 @@
 "use client";
 import { useState } from "react";
-import { Leaf, Droplet, Heart, Flower2, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
 import { FlyingItem } from "./FlyingItem";
 import { Toast } from "./Toast";
 import { ProductModal } from "./ProductModal";
 
-const products = [
+interface Product {
+  id: number;
+  name: string;
+  price: string;
+  priceNumber: number;
+  desc: string;
+  image: string | null;
+  category: string;
+  badge: string | null;
+}
+
+const products: Product[] = [
   { 
     id: 1, 
     name: "Kunyit Asem", 
     price: "Rp 45.000", 
     priceNumber: 45000, 
     desc: "Minuman tradisional dari kunyit dan asam jawa. Menyegarkan dan baik untuk pencernaan.", 
-    icon: Leaf, 
-    color: "from-yellow-400 to-orange-500", 
+    image: "/products/kunyit-asem.jpg",
     category: "Jamu Tradisional",
     badge: "Best Seller"
   },
@@ -24,8 +34,7 @@ const products = [
     price: "Rp 45.000", 
     priceNumber: 45000, 
     desc: "Wedang jahe hangat dengan gula aren. Menghangatkan tubuh dan meningkatkan daya tahan tubuh.", 
-    icon: Droplet, 
-    color: "from-amber-400 to-red-500", 
+    image: "/products/jahe-manis.jpg",
     category: "Jamu Tradisional",
     badge: null
   },
@@ -35,8 +44,7 @@ const products = [
     price: "Rp 45.000", 
     priceNumber: 45000, 
     desc: "Perpaduan beras dan kencur yang khas. Baik untuk stamina dan kesehatan tubuh.", 
-    icon: Heart, 
-    color: "from-green-400 to-emerald-600", 
+    image: "/products/beras-kencur.jpg",
     category: "Jamu Tradisional",
     badge: "Favorit"
   },
@@ -46,8 +54,7 @@ const products = [
     price: "Rp 45.000", 
     priceNumber: 45000, 
     desc: "Jamu temulawak asli untuk menjaga kesehatan hati dan meningkatkan nafsu makan.", 
-    icon: Flower2, 
-    color: "from-orange-400 to-yellow-600", 
+    image: "/products/temulawak.jpg",
     category: "Jamu Tradisional",
     badge: null
   },
@@ -57,8 +64,7 @@ const products = [
     price: "Rp 45.000", 
     priceNumber: 45000, 
     desc: "Jamu pahitan dari daun sambiloto. Baik untuk diabetes dan menjaga kadar gula darah.", 
-    icon: Leaf, 
-    color: "from-green-600 to-teal-700", 
+    image: "/products/sambiloto.jpg",
     category: "Jamu Tradisional",
     badge: null
   },
@@ -68,8 +74,7 @@ const products = [
     price: "Rp 45.000", 
     priceNumber: 45000, 
     desc: "Ekstrak daun sirih tradisional. Baik untuk kesehatan mulut dan pencernaan.", 
-    icon: Leaf, 
-    color: "from-emerald-400 to-green-600", 
+    image: null,
     category: "Jamu Tradisional",
     badge: "Baru"
   },
@@ -81,7 +86,7 @@ export function MenuSection() {
   const [flyingItem, setFlyingItem] = useState<{ startX: number; startY: number; endX: number; endY: number; key: number } | null>(null);
   const [toastMessage, setToastMessage] = useState("");
   const [showToast, setShowToast] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<typeof products[0] | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { addToCart } = useCart();
 
@@ -91,14 +96,12 @@ export function MenuSection() {
     return matchesSearch;
   });
 
-  const handleAddToCart = (product: typeof products[0], event: React.MouseEvent<HTMLButtonElement>) => {
-    // 1. Ambil posisi tombol yang diklik langsung dari event
+  const handleAddToCart = (product: Product, event: React.MouseEvent<HTMLButtonElement>) => {
     const button = event.currentTarget;
     const buttonRect = button.getBoundingClientRect();
     const startX = buttonRect.left + buttonRect.width / 2;
     const startY = buttonRect.top + buttonRect.height / 2;
 
-    // 2. Ambil posisi cart icon
     const cartElement = document.querySelector('[data-cart-icon]') as HTMLElement;
     let endX = window.innerWidth - 100;
     let endY = 80;
@@ -109,7 +112,6 @@ export function MenuSection() {
       endY = cartRect.top + cartRect.height / 2;
     }
 
-    // 3. Trigger animasi dengan key unik
     setFlyingItem({ 
       startX, 
       startY, 
@@ -118,7 +120,6 @@ export function MenuSection() {
       key: Date.now()
     });
 
-    // 4. Tambah ke cart setelah animasi mulai
     setTimeout(() => {
       addToCart({
         id: product.id,
@@ -132,7 +133,7 @@ export function MenuSection() {
     }, 100);
   };
 
-  const handleCardClick = (product: typeof products[0]) => {
+  const handleCardClick = (product: Product) => {
     setSelectedProduct(product);
     setIsModalOpen(true);
   };
@@ -174,7 +175,6 @@ export function MenuSection() {
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredProducts.map((product) => {
-              const Icon = product.icon;
               return (
                 <div
                   key={product.id}
@@ -189,10 +189,23 @@ export function MenuSection() {
                   )}
                   <div 
                     onClick={() => handleCardClick(product)}
-                    className={`h-32 bg-gradient-to-br ${product.color} flex items-center justify-center relative overflow-hidden`}
+                    className="h-48 relative overflow-hidden bg-stone-100"
                   >
+                    {product.image ? (
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.display = "none";
+                        }}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-stone-200">
+                        <span className="text-stone-400 text-sm font-medium">Foto segera hadir</span>
+                      </div>
+                    )}
                     <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors duration-500" />
-                    <Icon className="h-16 w-16 text-white relative z-10 group-hover:scale-110 transition-transform duration-500" />
                   </div>
                   <div className="p-6">
                     <h3 className="text-xl font-bold group-hover:text-amber-700 transition-colors duration-300 mb-2 text-stone-900">
@@ -219,7 +232,6 @@ export function MenuSection() {
         )}
       </div>
 
-      {/* Flying Item Animation */}
       {flyingItem && (
         <FlyingItem
           key={flyingItem.key}

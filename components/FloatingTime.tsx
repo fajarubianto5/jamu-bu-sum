@@ -14,7 +14,8 @@ export function FloatingTime() {
       
       const hours = jakartaTime.getHours();
       const minutes = jakartaTime.getMinutes();
-      const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+      const seconds = jakartaTime.getSeconds();
+      const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
       
       setTime(formattedTime);
       
@@ -31,7 +32,7 @@ export function FloatingTime() {
     <div className="fixed bottom-24 right-6 z-40 bg-white/95 backdrop-blur-md border border-stone-200 shadow-xl rounded-full px-4 py-2.5 flex items-center gap-2 transition-all hover:scale-105 cursor-default">
       <Clock className="h-4 w-4 text-amber-700" />
       <div className="flex items-center gap-2">
-        <span className="text-sm font-bold text-stone-800 tracking-wide">
+        <span className="text-sm font-bold text-stone-800 tracking-wide font-mono">
           {time}
         </span>
         <span className="text-[10px] font-medium text-stone-500 uppercase">WIB</span>

@@ -8,10 +8,10 @@ const stats = [
 ];
 
 const hotels = [
-  { name: "Morrissey Hotel", stars: 5, desc: "Hotel boutique bintang 5" },
-  { name: "Royal Kuningan Hotel", stars: 4, desc: "Hotel bisnis premium" },
-  { name: "Orchardz Hotel Group", stars: 4, desc: "Jaringan hotel internasional" },
-  { name: "Santika Hotel", stars: 4, desc: "Hotel nasional terpercaya" },
+  { name: "Hotel di Jakarta Pusat", stars: 5, desc: "Hotel boutique bintang 5" },
+  { name: "Hotel di Jakarta Selatan", stars: 4, desc: "Hotel bisnis premium" },
+  { name: "Hotel di Jakarta Pusat", stars: 4, desc: "Jaringan hotel internasional" },
+  { name: "Hotel di jakarta Barat", stars: 4, desc: "Hotel nasional terpercaya" },
 ];
 
 export function AboutSection() {

@@ -3,11 +3,11 @@ import { Hero } from "@/components/hero";
 import { PromoBanner } from "@/components/PromoBanner";
 import { MenuSection } from "@/components/MenuSection";
 import { AboutSection } from "@/components/AboutSection";
+import { TestimonialSection } from "@/components/TestimonialSection";
 import { ContactSection } from "@/components/ContactSection";
 import { Footer } from "@/components/Footer";
 import { FloatingWhatsApp } from "@/components/FloatingWhatsApp";
 import { BackToTop } from "@/components/BackToTop";
-import { FloatingTime } from "@/components/FloatingTime";
 import { ScrollAnimation } from "@/components/ScrollAnimation";
 import { BatikBackground } from "@/components/BatikBackground";
 
@@ -27,11 +27,13 @@ export default function Home() {
         <AboutSection />
       </ScrollAnimation>
       <ScrollAnimation>
+        <TestimonialSection />
+      </ScrollAnimation>
+      <ScrollAnimation>
         <ContactSection />
       </ScrollAnimation>
       <Footer />
       <FloatingWhatsApp />
-      <FloatingTime />
       <BackToTop />
     </div>
   );

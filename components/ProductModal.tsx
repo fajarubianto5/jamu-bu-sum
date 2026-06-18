@@ -1,4 +1,6 @@
 "use client";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 
 interface Product {
@@ -19,10 +21,16 @@ interface ProductModalProps {
 }
 
 export function ProductModal({ product, isOpen, onClose }: ProductModalProps) {
-  if (!isOpen || !product) return null;
+  const [mounted, setMounted] = useState(false);
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!isOpen || !product || !mounted) return null;
+
+  const modalContent = (
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
       <div className="relative bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
         {/* Close Button */}
         <button
@@ -97,4 +105,7 @@ export function ProductModal({ product, isOpen, onClose }: ProductModalProps) {
       </div>
     </div>
   );
+
+  // Render modal di body menggunakan Portal
+  return createPortal(modalContent, document.body);
 }

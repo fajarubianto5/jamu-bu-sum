@@ -24,7 +24,7 @@ const products: Product[] = [
     price: "Rp 45.000", 
     priceNumber: 45000, 
     desc: "Minuman tradisional dari kunyit dan asam jawa. Menyegarkan dan baik untuk pencernaan.", 
-    image: "/products/kunyit-asem.jpg",
+    image: null, // Tidak ada foto
     category: "Jamu Tradisional",
     badge: "Best Seller"
   },
@@ -34,7 +34,7 @@ const products: Product[] = [
     price: "Rp 45.000", 
     priceNumber: 45000, 
     desc: "Wedang jahe hangat dengan gula aren. Menghangatkan tubuh dan meningkatkan daya tahan tubuh.", 
-    image: "/products/jahe-manis.jpg",
+    image: null, // Tidak ada foto
     category: "Jamu Tradisional",
     badge: null
   },
@@ -44,7 +44,7 @@ const products: Product[] = [
     price: "Rp 45.000", 
     priceNumber: 45000, 
     desc: "Perpaduan beras dan kencur yang khas. Baik untuk stamina dan kesehatan tubuh.", 
-    image: "/products/beras-kencur.jpg",
+    image: null, // Tidak ada foto
     category: "Jamu Tradisional",
     badge: "Favorit"
   },
@@ -54,7 +54,7 @@ const products: Product[] = [
     price: "Rp 45.000", 
     priceNumber: 45000, 
     desc: "Jamu temulawak asli untuk menjaga kesehatan hati dan meningkatkan nafsu makan.", 
-    image: "/products/temulawak.jpg",
+    image: null, // Tidak ada foto
     category: "Jamu Tradisional",
     badge: null
   },
@@ -64,7 +64,7 @@ const products: Product[] = [
     price: "Rp 45.000", 
     priceNumber: 45000, 
     desc: "Jamu pahitan dari daun sambiloto. Baik untuk diabetes dan menjaga kadar gula darah.", 
-    image: "/products/sambiloto.jpg",
+    image: null, // Tidak ada foto
     category: "Jamu Tradisional",
     badge: null
   },
@@ -74,7 +74,7 @@ const products: Product[] = [
     price: "Rp 45.000", 
     priceNumber: 45000, 
     desc: "Ekstrak daun sirih tradisional. Baik untuk kesehatan mulut dan pencernaan.", 
-    image: null,
+    image: null, // Tidak ada foto
     category: "Jamu Tradisional",
     badge: "Baru"
   },

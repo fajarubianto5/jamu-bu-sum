@@ -1,17 +1,19 @@
 "use client";
 import { X } from "lucide-react";
 
+interface Product {
+  id: number;
+  name: string;
+  price: string;
+  priceNumber: number;
+  desc: string;
+  image: string | null;
+  category: string;
+  badge: string | null;
+}
+
 interface ProductModalProps {
-  product: {
-    id: number;
-    name: string;
-    price: string;
-    priceNumber: number;
-    desc: string;
-    image: string | null;
-    category: string;
-    badge: string | null;
-  } | null;
+  product: Product | null;
   isOpen: boolean;
   onClose: () => void;
 }

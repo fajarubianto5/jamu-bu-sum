@@ -4,11 +4,12 @@ import { PromoBanner } from "@/components/PromoBanner";
 import { FloatingTime } from "@/components/FloatingTime";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ShoppingCart, Trash2, Plus, Minus, ArrowLeft, MessageCircle, CheckCircle, Award, Shield } from "lucide-react";
+import { ShoppingCart, Trash2, Plus, Minus, ArrowLeft, MessageCircle, CheckCircle, Award, Truck } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/Footer";
 import { ScrollAnimation } from "@/components/ScrollAnimation";
+import { FloatingWhatsApp } from "@/components/FloatingWhatsApp";
 
 const recommendedProducts = [
   { id: 1, name: "Kunyit Asem", price: "Rp 45.000", color: "from-yellow-400 to-orange-500", badge: "Best Seller" },
@@ -19,7 +20,7 @@ const recommendedProducts = [
 const trustBadges = [
   { icon: CheckCircle, title: "100% Bahan Alami", desc: "Tanpa pengawet buatan" },
   { icon: Award, title: "Kualitas Terjamin", desc: "Resep warisan 1990" },
-  { icon: Shield, title: "Dipercaya Hotel", desc: "Supplier hotel bintang 5" },
+  { icon: Truck, title: "Gratis Ongkir", desc: "Pembelian 6 botol/liter" },
 ];
 
 export default function CartPage() {
@@ -32,17 +33,36 @@ export default function CartPage() {
     return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(price);
   };
 
+  // Hitung ongkos kirim: gratis jika 6+ botol, Rp 10rb per botol kurang
+  const calculateShipping = (items: number): number => {
+    if (items >= 6) return 0;
+    return (6 - items) * 10000;
+  };
+
+  const shippingCost = calculateShipping(totalItems);
+  const grandTotal = totalPrice + shippingCost;
+  const bottlesNeededForFreeShipping = Math.max(0, 6 - totalItems);
+
   const handleWhatsAppOrder = () => {
     const adminNumber = "6282114507525";
     let message = "*🛒 PESANAN BARU DARI WEBSITE JAMU BU SUM*\n\n";
-    message += " *Detail Pesanan:*\n";
+    message += "*Detail Pesanan:*\n";
     items.forEach((item, index) => {
       message += `${index + 1}. ${item.name}\n`;
       message += `   Qty: ${item.quantity}x ${formatPrice(item.priceNumber)}\n`;
       message += `   Subtotal: ${formatPrice(item.priceNumber * item.quantity)}\n\n`;
     });
-    message += `💰 *Total: ${formatPrice(totalPrice)}*\n`;
+    message += `💰 *Subtotal: ${formatPrice(totalPrice)}*\n`;
+    
+    if (shippingCost === 0) {
+      message += `🚚 *Ongkos Kirim: GRATIS* (6+ botol)\n`;
+    } else {
+      message += `🚚 Ongkos Kirim: ${formatPrice(shippingCost)}\n`;
+    }
+    
+    message += `\n💵 *TOTAL: ${formatPrice(grandTotal)}*\n`;
     message += `\nAlamat pengiriman akan dikonfirmasi via chat`;
+    
     const encodedMessage = encodeURIComponent(message);
     window.open(`https://wa.me/${adminNumber}?text=${encodedMessage}`, "_blank");
   };
@@ -58,9 +78,9 @@ export default function CartPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <BatikBackground />
-      <Navbar />
       <PromoBanner />
-      <main className="flex-1 py-12 bg-stone-50">
+      <Navbar />
+      <main className="flex-1 py-12 mt-[80px]">
         <div className="container mx-auto px-4 max-w-4xl">
           {/* Header dengan animasi */}
           <ScrollAnimation>
@@ -142,13 +162,28 @@ export default function CartPage() {
                       </div>
                       <div className="flex justify-between text-stone-600">
                         <span>Ongkos Kirim</span>
-                        <span className="text-green-600">Gratis*</span>
+                        {shippingCost === 0 ? (
+                          <span className="text-green-600 font-bold">GRATIS 🎉</span>
+                        ) : (
+                          <span>{formatPrice(shippingCost)}</span>
+                        )}
                       </div>
-                      <p className="text-xs text-stone-400">*Minimal 5 liter area Jakarta</p>
+                      
+                      {/* Progress Gratis Ongkir */}
+                      {shippingCost === 0 ? (
+                        <p className="text-xs text-green-600 bg-green-50 p-2 rounded-lg">
+                          🚚 <strong>GRATIS ONGKIR</strong> (6+ botol)
+                        </p>
+                      ) : (
+                        <p className="text-xs text-amber-700 bg-amber-50 p-2 rounded-lg">
+                          🚚 Nambah <strong>{bottlesNeededForFreeShipping} botol</strong> lagi untuk <strong>GRATIS ONGKIR</strong>
+                        </p>
+                      )}
+                      
                       <div className="border-t pt-2 mt-2">
                         <div className="flex justify-between text-lg font-bold">
                           <span>Total</span>
-                          <span className="text-amber-700">{formatPrice(totalPrice)}</span>
+                          <span className="text-amber-700">{formatPrice(grandTotal)}</span>
                         </div>
                       </div>
                     </div>
@@ -192,7 +227,7 @@ export default function CartPage() {
                         <h4 className="font-bold text-stone-900 mb-1 group-hover:text-amber-700 transition-colors">
                           {product.name}
                         </h4>
-                        <p className="text-amber-700 font-bold">{product.price}<span className="text-sm text-stone-500">/liter</span></p>
+                        <p className="text-amber-700 font-bold">{product.price} <span className="text-sm text-stone-500 font-normal">(1 Liter)</span></p>
                       </div>
                     </Link>
                   </ScrollAnimation>
@@ -219,6 +254,7 @@ export default function CartPage() {
         </div>
       </main>
       <Footer />
+      <FloatingWhatsApp />
       <FloatingTime />
     </div>
   );

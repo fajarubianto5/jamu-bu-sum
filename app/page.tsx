@@ -3,7 +3,6 @@ import { Hero } from "@/components/hero";
 import { PromoBanner } from "@/components/PromoBanner";
 import { MenuSection } from "@/components/MenuSection";
 import { AboutSection } from "@/components/AboutSection";
-import { TestimonialSection } from "@/components/TestimonialSection";
 import { ContactSection } from "@/components/ContactSection";
 import { Footer } from "@/components/Footer";
 import { FloatingWhatsApp } from "@/components/FloatingWhatsApp";
@@ -26,9 +25,6 @@ export default function Home() {
       </ScrollAnimation>
       <ScrollAnimation>
         <AboutSection />
-      </ScrollAnimation>
-      <ScrollAnimation>
-        <TestimonialSection />
       </ScrollAnimation>
       <ScrollAnimation>
         <ContactSection />

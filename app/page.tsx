@@ -10,6 +10,7 @@ import { FloatingWhatsApp } from "@/components/FloatingWhatsApp";
 import { BackToTop } from "@/components/BackToTop";
 import { ScrollAnimation } from "@/components/ScrollAnimation";
 import { BatikBackground } from "@/components/BatikBackground";
+import { FloatingTime } from "@/components/FloatingTime";
 
 export default function Home() {
   return (
@@ -34,6 +35,7 @@ export default function Home() {
       </ScrollAnimation>
       <Footer />
       <FloatingWhatsApp />
+      <FloatingTime />
       <BackToTop />
     </div>
   );

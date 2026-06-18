@@ -22,11 +22,11 @@ export function PromoBanner() {
             </div>
             <div className="flex-1 min-w-0">
               <p className="font-bold text-sm md:text-base truncate">
-                🚚 Gratis Ongkir untuk pembelian minimal 5 liter dalam area Jakarta!
+                🚚 Gratis Ongkir untuk pembelian minimal 6 botol/liter dalam area Jakarta!
               </p>
               <p className="text-xs md:text-sm opacity-90 flex items-center gap-1 mt-0.5">
                 <Gift className="h-3 w-3" />
-                Supplier terpercaya hotel bintang 5 sejak 1990
+                Supplier terpercaya hotel bintang 5 yang ada di Jakarta
               </p>
             </div>
           </div>

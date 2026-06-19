@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { Search } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
-import { FlyingItem } from "./FlyingItem";
 import { Toast } from "./Toast";
 import { ProductModal } from "./ProductModal";
 
@@ -18,72 +17,16 @@ interface Product {
 }
 
 const products: Product[] = [
-  { 
-    id: 1, 
-    name: "Kunyit Asem", 
-    price: "Rp 45.000", 
-    priceNumber: 45000, 
-    desc: "Minuman tradisional dari kunyit dan asam jawa. Menyegarkan dan baik untuk pencernaan.", 
-    image: null, // Tidak ada foto
-    category: "Jamu Tradisional",
-    badge: "Best Seller"
-  },
-  { 
-    id: 2, 
-    name: "Jahe Manis", 
-    price: "Rp 45.000", 
-    priceNumber: 45000, 
-    desc: "Wedang jahe hangat dengan gula aren. Menghangatkan tubuh dan meningkatkan daya tahan tubuh.", 
-    image: null, // Tidak ada foto
-    category: "Jamu Tradisional",
-    badge: null
-  },
-  { 
-    id: 3, 
-    name: "Beras Kencur", 
-    price: "Rp 45.000", 
-    priceNumber: 45000, 
-    desc: "Perpaduan beras dan kencur yang khas. Baik untuk stamina dan kesehatan tubuh.", 
-    image: null, // Tidak ada foto
-    category: "Jamu Tradisional",
-    badge: "Favorit"
-  },
-  { 
-    id: 4, 
-    name: "Temulawak", 
-    price: "Rp 45.000", 
-    priceNumber: 45000, 
-    desc: "Jamu temulawak asli untuk menjaga kesehatan hati dan meningkatkan nafsu makan.", 
-    image: null, // Tidak ada foto
-    category: "Jamu Tradisional",
-    badge: null
-  },
-  { 
-    id: 5, 
-    name: "Sambiloto (Pahitan)", 
-    price: "Rp 45.000", 
-    priceNumber: 45000, 
-    desc: "Jamu pahitan dari daun sambiloto. Baik untuk diabetes dan menjaga kadar gula darah.", 
-    image: null, // Tidak ada foto
-    category: "Jamu Tradisional",
-    badge: null
-  },
-  { 
-    id: 6, 
-    name: "Daun Sirih", 
-    price: "Rp 45.000", 
-    priceNumber: 45000, 
-    desc: "Ekstrak daun sirih tradisional. Baik untuk kesehatan mulut dan pencernaan.", 
-    image: null, // Tidak ada foto
-    category: "Jamu Tradisional",
-    badge: "Baru"
-  },
+  { id: 1, name: "Kunyit Asem", price: "Rp 45.000", priceNumber: 45000, desc: "Minuman tradisional dari kunyit dan asam jawa. Menyegarkan dan baik untuk pencernaan.", image: "/products/kunyit-asem.jpg", category: "Jamu Tradisional", badge: "Best Seller" },
+  { id: 2, name: "Jahe Manis", price: "Rp 45.000", priceNumber: 45000, desc: "Wedang jahe hangat dengan gula aren. Menghangatkan tubuh dan meningkatkan daya tahan tubuh.", image: "/products/jahe-manis.jpg", category: "Jamu Tradisional", badge: null },
+  { id: 3, name: "Beras Kencur", price: "Rp 45.000", priceNumber: 45000, desc: "Perpaduan beras dan kencur yang khas. Baik untuk stamina dan kesehatan tubuh.", image: "/products/beras-kencur.jpg", category: "Jamu Tradisional", badge: "Favorit" },
+  { id: 4, name: "Temulawak", price: "Rp 45.000", priceNumber: 45000, desc: "Jamu temulawak asli untuk menjaga kesehatan hati dan meningkatkan nafsu makan.", image: "/products/temulawak.jpg", category: "Jamu Tradisional", badge: null },
+  { id: 5, name: "Sambiloto (Pahitan)", price: "Rp 45.000", priceNumber: 45000, desc: "Jamu pahitan dari daun sambiloto. Baik untuk diabetes dan menjaga kadar gula darah.", image: "/products/sambiloto.jpg", category: "Jamu Tradisional", badge: null },
+  { id: 6, name: "Daun Sirih", price: "Rp 45.000", priceNumber: 45000, desc: "Ekstrak daun sirih tradisional. Baik untuk kesehatan mulut dan pencernaan.", image: null, category: "Jamu Tradisional", badge: "Baru" },
 ];
 
 export function MenuSection() {
-  const [hoveredId, setHoveredId] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [flyingItem, setFlyingItem] = useState<{ startX: number; startY: number; endX: number; endY: number; key: number } | null>(null);
   const [toastMessage, setToastMessage] = useState("");
   const [showToast, setShowToast] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -96,46 +39,23 @@ export function MenuSection() {
     return matchesSearch;
   });
 
-  const handleAddToCart = (product: Product, event: React.MouseEvent<HTMLButtonElement>) => {
-    const button = event.currentTarget;
-    const buttonRect = button.getBoundingClientRect();
-    const startX = buttonRect.left + buttonRect.width / 2;
-    const startY = buttonRect.top + buttonRect.height / 2;
+  const handleCardClick = (product: Product) => {
+    setSelectedProduct(product);
+    setIsModalOpen(true);
+  };
 
-    const cartElement = document.querySelector('[data-cart-icon]') as HTMLElement;
-    let endX = window.innerWidth - 100;
-    let endY = 80;
-    
-    if (cartElement) {
-      const cartRect = cartElement.getBoundingClientRect();
-      endX = cartRect.left + cartRect.width / 2;
-      endY = cartRect.top + cartRect.height / 2;
-    }
-
-    setFlyingItem({ 
-      startX, 
-      startY, 
-      endX, 
-      endY, 
-      key: Date.now()
-    });
-
-    setTimeout(() => {
+  const handleAddToCart = (product: Product, quantity: number) => {
+    for (let i = 0; i < quantity; i++) {
       addToCart({
         id: product.id,
-        name: product.name,
+        name: `${product.name} (1 Liter)`,
         price: product.price,
         priceNumber: product.priceNumber,
         category: product.category
       });
-      setToastMessage(`${product.name} ditambahkan ke keranjang`);
-      setShowToast(true);
-    }, 100);
-  };
-
-  const handleCardClick = (product: Product) => {
-    setSelectedProduct(product);
-    setIsModalOpen(true);
+    }
+    setToastMessage(`${quantity}x ${product.name} ditambahkan ke keranjang`);
+    setShowToast(true);
   };
 
   return (
@@ -165,95 +85,64 @@ export function MenuSection() {
           <div className="text-center py-16">
             <Search className="h-16 w-16 text-stone-300 mx-auto mb-4" />
             <p className="text-stone-600 text-lg">Tidak ada produk yang cocok dengan pencarian Anda</p>
-            <button
-              onClick={() => setSearchQuery("")}
-              className="mt-4 text-amber-700 font-medium hover:underline"
-            >
-              Reset Pencarian
-            </button>
+            <button onClick={() => setSearchQuery("")} className="mt-4 text-amber-700 font-medium hover:underline">Reset Pencarian</button>
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredProducts.map((product) => {
-              return (
-                <div
-                  key={product.id}
-                  onMouseEnter={() => setHoveredId(product.id)}
-                  onMouseLeave={() => setHoveredId(null)}
-                  className="group relative bg-white rounded-2xl border border-stone-200 overflow-hidden cursor-pointer transition-all duration-500 hover:shadow-2xl hover:-translate-y-2"
-                >
-                  {product.badge && (
-                    <div className="absolute top-4 right-4 z-20 bg-amber-700 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
-                      {product.badge}
+            {filteredProducts.map((product) => (
+              <div
+                key={product.id}
+                className="group relative bg-white rounded-2xl border border-stone-200 overflow-hidden cursor-pointer transition-all duration-500 hover:shadow-2xl hover:-translate-y-2"
+                onClick={() => handleCardClick(product)}
+              >
+                {product.badge && (
+                  <div className="absolute top-4 right-4 z-20 bg-amber-700 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                    {product.badge}
+                  </div>
+                )}
+                {/* FOTO PRODUK: Kembali ke object-cover (mengisi penuh) */}
+                <div className="h-48 relative overflow-hidden bg-stone-100">
+                  {product.image ? (
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-stone-200">
+                      <span className="text-stone-400 text-sm font-medium">Foto segera hadir</span>
                     </div>
                   )}
-                  <div 
-                    onClick={() => handleCardClick(product)}
-                    className="h-48 relative overflow-hidden bg-stone-100"
-                  >
-                    {product.image ? (
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).style.display = "none";
-                        }}
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-stone-200">
-                        <span className="text-stone-400 text-sm font-medium">Foto segera hadir</span>
-                      </div>
-                    )}
-                    <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors duration-500" />
-                  </div>
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold group-hover:text-amber-700 transition-colors duration-300 mb-2 text-stone-900">
-                      {product.name}
-                    </h3>
-                    <p className="text-stone-600 text-sm mb-4 leading-relaxed">{product.desc}</p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-2xl font-bold text-amber-700">{product.price}<span className="text-sm text-stone-500">/liter</span></span>
-                      <button 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleAddToCart(product, e);
-                        }}
-                        className="px-4 py-2 bg-stone-900 text-white text-sm font-medium rounded-lg hover:bg-amber-700 transition-colors duration-300"
-                      >
-                        Pesan
-                      </button>
-                    </div>
+                  <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors duration-500" />
+                </div>
+                <div className="p-6">
+                  <h3 className="text-xl font-bold group-hover:text-amber-700 transition-colors duration-300 mb-2 text-stone-900">{product.name}</h3>
+                  <p className="text-stone-600 text-sm mb-4 leading-relaxed">{product.desc}</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-2xl font-bold text-amber-700">{product.price} <span className="text-sm text-stone-500 font-normal">(1 Liter)</span></span>
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); handleCardClick(product); }}
+                      className="px-4 py-2 bg-stone-900 text-white text-sm font-medium rounded-lg hover:bg-amber-700 transition-colors duration-300"
+                    >
+                      Pesan
+                    </button>
                   </div>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         )}
       </div>
 
-      {flyingItem && (
-        <FlyingItem
-          key={flyingItem.key}
-          startX={flyingItem.startX}
-          startY={flyingItem.startY}
-          endX={flyingItem.endX}
-          endY={flyingItem.endY}
-          onComplete={() => setFlyingItem(null)}
-        />
-      )}
-
-      <Toast
-        message={toastMessage}
-        isVisible={showToast}
-        onClose={() => setShowToast(false)}
-      />
+      <Toast message={toastMessage} isVisible={showToast} onClose={() => setShowToast(false)} />
 
       {selectedProduct && (
         <ProductModal
           product={selectedProduct}
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
+          onAddToCart={handleAddToCart}
         />
       )}
     </section>

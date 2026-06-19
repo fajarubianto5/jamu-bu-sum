@@ -9,12 +9,36 @@ import { useCart } from "@/lib/cart-context";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/Footer";
 import { ScrollAnimation } from "@/components/ScrollAnimation";
-import { FloatingWhatsApp } from "@/components/FloatingWhatsApp";
 
+// Data produk populer dengan foto
 const recommendedProducts = [
-  { id: 1, name: "Kunyit Asem", price: "Rp 45.000", color: "from-yellow-400 to-orange-500", badge: "Best Seller" },
-  { id: 3, name: "Beras Kencur", price: "Rp 45.000", color: "from-green-400 to-emerald-600", badge: "Favorit" },
-  { id: 2, name: "Jahe Manis", price: "Rp 45.000", color: "from-amber-400 to-red-500", badge: null },
+  { 
+    id: 1, 
+    name: "Kunyit Asem", 
+    price: "Rp 45.000", 
+    priceNumber: 45000,
+    image: "/products/kunyit-asem.jpg",
+    category: "Jamu Tradisional",
+    badge: "Best Seller" 
+  },
+  { 
+    id: 3, 
+    name: "Beras Kencur", 
+    price: "Rp 45.000", 
+    priceNumber: 45000,
+    image: "/products/beras-kencur.jpg",
+    category: "Jamu Tradisional",
+    badge: "Favorit" 
+  },
+  { 
+    id: 2, 
+    name: "Jahe Manis", 
+    price: "Rp 45.000", 
+    priceNumber: 45000,
+    image: "/products/jahe-manis.jpg",
+    category: "Jamu Tradisional",
+    badge: null 
+  },
 ];
 
 const trustBadges = [
@@ -24,8 +48,10 @@ const trustBadges = [
 ];
 
 export default function CartPage() {
-  const { items, updateQuantity, removeFromCart, clearCart, totalPrice, totalItems } = useCart();
+  const { items, updateQuantity, removeFromCart, clearCart, totalPrice, totalItems, addToCart } = useCart();
   const [isLoaded, setIsLoaded] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [showToast, setShowToast] = useState(false);
 
   useEffect(() => { setIsLoaded(true); }, []);
 
@@ -65,6 +91,19 @@ export default function CartPage() {
     
     const encodedMessage = encodeURIComponent(message);
     window.open(`https://wa.me/${adminNumber}?text=${encodedMessage}`, "_blank");
+  };
+
+  // Fungsi tambah produk populer ke cart
+  const handleQuickAdd = (product: typeof recommendedProducts[0]) => {
+    addToCart({
+      id: product.id,
+      name: `${product.name} (1 Liter)`,
+      price: product.price,
+      priceNumber: product.priceNumber,
+      category: product.category
+    });
+    setToastMessage(`${product.name} ditambahkan ke keranjang`);
+    setShowToast(true);
   };
 
   if (!isLoaded) {
@@ -200,7 +239,7 @@ export default function CartPage() {
             </div>
           )}
 
-          {/* Rekomendasi Produk dengan animasi stagger */}
+          {/* Rekomendasi Produk dengan FOTO dan TOMBOL PESAN */}
           {items.length === 0 && (
             <div className="mt-16">
               <ScrollAnimation>
@@ -211,25 +250,44 @@ export default function CartPage() {
               <div className="grid md:grid-cols-3 gap-6">
                 {recommendedProducts.map((product, idx) => (
                   <ScrollAnimation key={product.id} delay={idx * 150}>
-                    <Link 
-                      href="/#produk"
-                      className="group bg-white rounded-xl border border-stone-200 overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 block"
-                    >
-                      <div className={`h-32 bg-gradient-to-br ${product.color} flex items-center justify-center relative`}>
+                    <div className="group bg-white rounded-xl border border-stone-200 overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                      {/* Foto Produk */}
+                      <div className="h-48 relative overflow-hidden bg-stone-100">
+                        {product.image ? (
+                          <img
+                            src={product.image}
+                            alt={product.name}
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-stone-200 flex items-center justify-center">
+                            <ShoppingCart className="h-12 w-12 text-stone-400" />
+                          </div>
+                        )}
                         {product.badge && (
-                          <span className="absolute top-3 right-3 bg-white/90 text-amber-800 text-xs font-bold px-2 py-1 rounded-full">
+                          <span className="absolute top-3 right-3 bg-white/90 text-amber-800 text-xs font-bold px-2 py-1 rounded-full shadow-sm">
                             {product.badge}
                           </span>
                         )}
-                        <ShoppingCart className="h-12 w-12 text-white/80" />
                       </div>
+                      {/* Info Produk */}
                       <div className="p-4">
                         <h4 className="font-bold text-stone-900 mb-1 group-hover:text-amber-700 transition-colors">
                           {product.name}
                         </h4>
-                        <p className="text-amber-700 font-bold">{product.price} <span className="text-sm text-stone-500 font-normal">(1 Liter)</span></p>
+                        <p className="text-amber-700 font-bold mb-3">
+                          {product.price} <span className="text-sm text-stone-500 font-normal">(1 Liter)</span>
+                        </p>
+                        {/* Tombol Pesan */}
+                        <button
+                          onClick={() => handleQuickAdd(product)}
+                          className="w-full py-2 bg-stone-900 text-white font-medium rounded-lg hover:bg-amber-700 transition-colors flex items-center justify-center gap-2"
+                        >
+                          <ShoppingCart className="h-4 w-4" />
+                          Pesan
+                        </button>
                       </div>
-                    </Link>
+                    </div>
                   </ScrollAnimation>
                 ))}
               </div>
@@ -254,8 +312,17 @@ export default function CartPage() {
         </div>
       </main>
       <Footer />
-      <FloatingWhatsApp />
       <FloatingTime />
+      
+      {/* Toast Notification */}
+      {showToast && (
+        <div className="fixed bottom-6 right-6 z-[9999] bg-stone-900 text-white px-6 py-3 rounded-lg shadow-lg animate-fade-in">
+          <div className="flex items-center gap-3">
+            <CheckCircle className="h-5 w-5 text-green-400" />
+            <span className="font-medium">{toastMessage}</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
